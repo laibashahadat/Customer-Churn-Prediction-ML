@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Batch Prediction{% endblock %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="eyebrow">Batch Prediction</p>
+        <h1>Upload Customer Dataset</h1>
+    </div>
+</section>
+<div class="form-card">
+    <form id="batchForm" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">CSV File</label>
+            <input type="file" name="file" class="form-control" accept=".csv">
+        </div>
+        <button type="submit" class="primary-button">Run Batch Prediction</button>
+    </form>
+    <div id="batchResult" class="result-box mt-4"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('batchForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const response = await fetch('/api/batch-predict', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        const target = document.getElementById('batchResult');
+        if (!response.ok) {
+            target.innerHTML = '<div class="alert alert-danger">' + (result.error || 'Batch prediction failed.') + '</div>';
+            return;
+        }
+        target.innerHTML = '<div class="alert alert-success">Processed ' + result.rows_processed + ' records. Predicted Yes: ' + result.summary.predicted_yes + ', Predicted No: ' + result.summary.predicted_no + '</div>';
+    });
+</script>
+{% endblock %}

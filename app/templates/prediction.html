@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Prediction{% endblock %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="eyebrow">Single Prediction</p>
+        <h1>Customer Risk Assessment</h1>
+    </div>
+</section>
+<div class="form-card">
+    <form id="predictionForm">
+        <div class="row g-3">
+            <div class="col-md-4"><label class="form-label">Gender</label><input name="gender" class="form-control" value="Male"></div>
+            <div class="col-md-4"><label class="form-label">Senior Citizen</label><input name="SeniorCitizen" type="number" class="form-control" value="0"></div>
+            <div class="col-md-4"><label class="form-label">Partner</label><input name="Partner" class="form-control" value="Yes"></div>
+            <div class="col-md-4"><label class="form-label">Dependents</label><input name="Dependents" class="form-control" value="No"></div>
+            <div class="col-md-4"><label class="form-label">Tenure</label><input name="tenure" type="number" class="form-control" value="12"></div>
+            <div class="col-md-4"><label class="form-label">Phone Service</label><input name="PhoneService" class="form-control" value="Yes"></div>
+            <div class="col-md-4"><label class="form-label">Internet Service</label><input name="InternetService" class="form-control" value="Fiber optic"></div>
+            <div class="col-md-4"><label class="form-label">Online Security</label><input name="OnlineSecurity" class="form-control" value="No"></div>
+            <div class="col-md-4"><label class="form-label">Online Backup</label><input name="OnlineBackup" class="form-control" value="Yes"></div>
+            <div class="col-md-4"><label class="form-label">Device Protection</label><input name="DeviceProtection" class="form-control" value="No"></div>
+            <div class="col-md-4"><label class="form-label">Tech Support</label><input name="TechSupport" class="form-control" value="No"></div>
+            <div class="col-md-4"><label class="form-label">Contract</label><input name="Contract" class="form-control" value="Month-to-month"></div>
+            <div class="col-md-4"><label class="form-label">Paperless Billing</label><input name="PaperlessBilling" class="form-control" value="Yes"></div>
+            <div class="col-md-4"><label class="form-label">Payment Method</label><input name="PaymentMethod" class="form-control" value="Electronic check"></div>
+            <div class="col-md-4"><label class="form-label">Monthly Charges</label><input name="MonthlyCharges" type="number" step="0.01" class="form-control" value="80.5"></div>
+            <div class="col-md-4"><label class="form-label">Total Charges</label><input name="TotalCharges" type="number" step="0.01" class="form-control" value="950.0"></div>
+        </div>
+        <button type="submit" class="primary-button mt-4">Predict</button>
+    </form>
+    <div id="predictionResult" class="result-box mt-4"></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.getElementById('predictionForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const data = Object.fromEntries(new FormData(form).entries());
+        const payload = { ...data, SeniorCitizen: Number(data.SeniorCitizen), tenure: Number(data.tenure), MonthlyCharges: Number(data.MonthlyCharges), TotalCharges: Number(data.TotalCharges) };
+        const response = await fetch('/api/predict', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        const target = document.getElementById('predictionResult');
+        if (!response.ok) {
+            target.innerHTML = '<div class="alert alert-danger">' + (result.error || 'Prediction failed.') + '</div>';
+            return;
+        }
+        target.innerHTML = '<div class="alert alert-info">Prediction: <strong>' + result.prediction + '</strong><br>Probability: ' + result.probability + '<br>Risk: ' + result.risk_category + '</div>';
+    });
+</script>
+{% endblock %}

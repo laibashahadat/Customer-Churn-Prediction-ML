@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="eyebrow">Overview Dashboard</p>
+        <h1>Customer Churn Monitoring</h1>
+    </div>
+</section>
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total Customers</span>
+        <strong id="totalCustomers">0</strong>
+    </div>
+    <div class="stat-card accent-blue">
+        <span>Churned Customers</span>
+        <strong id="churnedCustomers">0</strong>
+    </div>
+    <div class="stat-card accent-green">
+        <span>Active Customers</span>
+        <strong id="activeCustomers">0</strong>
+    </div>
+    <div class="stat-card accent-gold">
+        <span>Churn Rate</span>
+        <strong id="churnRate">0%</strong>
+    </div>
+    <div class="stat-card accent-red">
+        <span>High-Risk Customers</span>
+        <strong id="highRiskCustomers">0</strong>
+    </div>
+</div>
+<div class="chart-grid">
+    <div class="chart-card">
+        <h3>Churn Distribution</h3>
+        <canvas id="distributionChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <h3>Risk Distribution</h3>
+        <canvas id="riskChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    loadDashboard();
+</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Prediction History{% endblock %}
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="eyebrow">Prediction History</p>
+        <h1>Stored Prediction Records</h1>
+    </div>
+</section>
+<div id="historyTable" class="info-box">
+    <p>Loading history…</p>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    fetch('/api/history')
+      .then(response => response.json())
+      .then(data => {
+        const rows = data.history || [];
+        const table = rows.map(row => '<tr><td>' + row.created_at + '</td><td>' + row.predicted_class + '</td><td>' + row.predicted_probability + '</td><td>' + row.risk_category + '</td></tr>').join('');
+        document.getElementById('historyTable').innerHTML = '<table class="table"><thead><tr><th>Timestamp</th><th>Prediction</th><th>Probability</th><th>Risk</th></tr></thead><tbody>' + table + '</tbody></table>';
+      });
+</script>
+{% endblock %}
